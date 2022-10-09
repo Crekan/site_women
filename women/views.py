@@ -10,16 +10,27 @@ def index(request):
     data = {
         'posts': posts,
     }
-
     return render(request, 'women/index.html', data)
+
+
+def show_post(request, post_id):
+    return HttpResponse(f'This is id - {post_id}')
 
 
 def about(request):
     return render(request, 'women/about.html')
 
-def categorise(request, cat_id):
-    print(request.GET)
-    return HttpResponse(f"<h1>Categories</h1><p>{cat_id}</p>")
+
+def addpage(request):
+    return HttpResponse('Добавление статьи')
+
+
+def contact(request):
+    return HttpResponse('Обратная связь')
+
+
+def login(request):
+    return HttpResponse('Авторизация')
 
 
 def pageNotFound(request, exception):

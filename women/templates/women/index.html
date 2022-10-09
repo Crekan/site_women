@@ -1,15 +1,19 @@
 {% extends 'women/base.html' %}
 
+
+{% block title %}{% endblock %}
+
+
 {% block content %}
-<ul class="list-articles">
-	{% for p in posts %}
-			<li><h2>{{p.title}}</h2>
-	{% autoescape on %}
-	{{p.content|linebreaks|truncatewords:50}}
-	{% endautoescape %}
-			<div class="clear"></div>
-			<p class="link-read-post"><a href="#">Читать пост</a></p>
-			</li>
-	{% endfor %}
-</ul>
+    <ul class="list-articles">
+        {% for p in posts %}
+            <li><h2>{{ p.title }}</h2>
+                {% autoescape on %}
+                    {{ p.content|linebreaks|truncatewords:50 }}
+                {% endautoescape %}
+                <div class="clear"></div>
+                <p class="link-read-post"><a href="{% url 'show_post' p.pk %}">Читать пост</a></p>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
