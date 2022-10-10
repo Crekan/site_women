@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound, Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
+from women.forms import *
 from women.models import *
 
 
@@ -11,8 +12,8 @@ def index(request):
     return render(request, 'women/index.html', data)
 
 
-def show_post(request, post_id):
-    post = get_object_or_404(Women, pk=post_id)
+def show_post(request, post_slug):
+    post = get_object_or_404(Women, slug=post_slug)
 
     data = {
         'post': post,
@@ -26,7 +27,22 @@ def about(request):
 
 
 def addpage(request):
-    return HttpResponse('Добавление статьи')
+    if request.method == 'POST':
+        form = AddPostForm(request.POST)
+        if form.is_valid():
+            try:
+                Women.objects.create(**form.cleaned_data)
+                return redirect('home')
+            except:
+                form.add_error(None, 'Ошибка добавление поста')
+    else:
+        form = AddPostForm()
+
+    data = {
+        'form': form,
+
+    }
+    return render(request, 'women/addpage.html', data)
 
 
 def contact(request):
@@ -42,8 +58,14 @@ def pageNotFound(request, exception):
 
 
 def show_category(request, cat_id):
-    data = {
+    posts = Women.objects.filter(cat_id=cat_id)
+
+    if len(posts) == 0:
+        raise Http404()
+
+    context = {
+        'posts': posts,
         'cat_selected': cat_id,
     }
-    return render(request, 'women/index.html', data)
 
+    return render(request, 'women/index.html', context=context)

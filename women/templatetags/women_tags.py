@@ -1,5 +1,5 @@
-from women.models import *
 from django import template
+from women.models import *
 
 register = template.Library()
 
@@ -19,11 +19,7 @@ def show_categories(sort=None, cat_selected=0):
     else:
         cats = Categories.objects.order_by(sort)
 
-    data = {
-        'cats': cats,
-        'cat_selected': cat_selected,
-    }
-    return data
+    return {"cats": cats, "cat_selected": cat_selected}
 
 
 @register.simple_tag(name='get_post')
