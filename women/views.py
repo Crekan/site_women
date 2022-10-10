@@ -1,20 +1,24 @@
-from django.http import HttpResponse, HttpResponseNotFound
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseNotFound, Http404
+from django.shortcuts import render, get_object_or_404
 
 from women.models import *
 
 
 def index(request):
-    posts = Women.objects.all()
-
     data = {
-        'posts': posts,
+        'cat_selected': 0,
     }
     return render(request, 'women/index.html', data)
 
 
 def show_post(request, post_id):
-    return HttpResponse(f'This is id - {post_id}')
+    post = get_object_or_404(Women, pk=post_id)
+
+    data = {
+        'post': post,
+        'cat_selected': post.cat_id,
+    }
+    return render(request, 'women/post.html', data)
 
 
 def about(request):
@@ -35,3 +39,11 @@ def login(request):
 
 def pageNotFound(request, exception):
     return HttpResponseNotFound('<h1>Страница не найдена</h1>')
+
+
+def show_category(request, cat_id):
+    data = {
+        'cat_selected': cat_id,
+    }
+    return render(request, 'women/index.html', data)
+
