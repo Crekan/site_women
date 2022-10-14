@@ -40,5 +40,5 @@ class Categories(models.Model):
 
     def get_absolute_url(self):
         return reverse('show_category', kwargs={
-            'cat_id': self.pk
+            'cat_slug': self.slug
         })
