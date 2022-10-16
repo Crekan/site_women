@@ -7,6 +7,8 @@ from women.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('women.urls')),
+    path('__debug__/', include('debug_toolbar.urls')),
+    path('captcha/', include('captcha.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

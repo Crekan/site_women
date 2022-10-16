@@ -7,8 +7,9 @@
     <link type="text/css" href="{% static 'women/css/styles.css' %}" rel="stylesheet"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="shortcut icon" href="{% static 'women/images/main.ico' %}" type="image/x-icon"/>
-     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -23,8 +24,17 @@
                         </a></li>
                         {% if not forloop.last %}
                             <li><a href="{% url 'about' %}">О сайте</a></li>
-                            <li><a href="{% url 'add_page' %}">Добавить статью</a></li>
+                            {% if user.is_authenticated %}
+                                <li><a href="{% url 'add_page' %}">Добавить статью</a></li>
+                            {% endif %}
                             <li><a href="{% url 'contact' %}">Обратная связь</a></li>
+
+                            {% if user.is_authenticated %}
+                                <li class="last">{{ user.username }} | <a href="{% url 'logout' %}">Выйти</a></li>
+                            {% else %}
+                                <li class="last"><a href="{% url 'register' %}">Регистрация</a> | <a href="{% url 'login' %}">Войти</a></li>
+                            {% endif %}
+
                         {% endif %}
                     </ul>
                     <div class="clear"></div>
@@ -35,6 +45,7 @@
             <table class="table-content" border=0 cellpadding="0" cellspacing="0">
                 <tr>
                     <!-- Sidebar слева -->
+
                     <td valign="top" class="left-chapters">
                         {% get_cats as categories %}
                         <ul id="leftchapters">
@@ -44,7 +55,17 @@
                                 <li><a href="{% url 'home' %}">Все категории</a></li>
                             {% endif %}
 
-                            {% show_categories '-name' cat_selected %}
+                            {#                            {% show_categories '-name' cat_selected %}#}
+
+                            {% for c in cats %}
+                                {% if c.women__count > 0 %}
+                                    {% if c.pk == cat_selected %}
+                                        <li class="selected">{{ c.name }}</li>
+                                    {% else %}
+                                        <li><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
 
                             <li class="share">
                                 <p>Наш канал</p>
@@ -64,6 +85,27 @@
                         <div class="content-text">
                             {% block content %}
                             {% endblock %}
+
+                        {% if page_obj.has_other_pages %}
+                        <nav class="list-pages">
+                            <ul>
+                            {% if page_obj.has_previous %}
+                                <li class="page-num">
+                                    <a href="?page={{ page_obj.previous_page_number }}">&lt;</a>
+                                </li>
+                            {% endif %}
+                                {% for p in paginator.page_range %}
+                                    {% if page_obj.number == p %}
+                                        <li class="page-num page-num-selected">{{ p }}</li>
+                                        {% elif p >= page_obj.number|add:-2 and page_obj.number|add:2 %}
+                                        <li class="page-num">
+                                            <a href="?page={{ p }}">{{ p }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            </ul>
+                        </nav>
                         </div>
                         <!-- Конец блока контента -->
 
